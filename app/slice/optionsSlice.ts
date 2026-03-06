@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 import {Backgrounds} from '../constant'
 
+
 const initialState = {
     backgrounds : Backgrounds.WHITE,
     isDownload : false,

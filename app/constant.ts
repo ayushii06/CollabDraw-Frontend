@@ -7,6 +7,8 @@ import minus from '../public/toolbar/minus.svg'
 import rectangle from '../public/toolbar/rectangle.svg'
 import circle from '../public/toolbar/circle.svg'
 import hand from '../public/toolbar/hand.svg'
+import { Circle, CircleDashed, Eraser, Hand, LassoSelect, Minus, Pen, RectangleCircle, RectangleHorizontal, Square, SquareDashed, SquareMousePointer, Text, TypeIcon } from 'lucide-react'
+
 
 const colors = {
     BLACK: '#1d1d1d',
@@ -29,25 +31,24 @@ const fillColors = {
 
 const tools = {
     Move:'pan',
-    Select : 'select',
+    Select :'select',
     Pen : 'pen',
     Eraser : 'eraser',
     Rectangle : 'rectangle',
     Circle:'circle',
     Line : 'line',
     Text : 'text',
-   
 }
 
 const icons = [
-    { id: tools.Move, src: hand, alt: 'Move',url : '/'  },
-    { id: tools.Select, src: select, alt: 'Select' , url : '/' },
-    { id: tools.Pen, src: pen, alt: 'Pen' ,url : '/'  },
-    { id: tools.Eraser, src: eraser, alt: 'Eraser',url : '/'  },
-    { id: tools.Rectangle, src: rectangle, alt: 'Rectangle',url : '/'  },
-    {id:tools.Circle,src:circle,alt:'Circle',url:'/'},
-    { id: tools.Line, src: minus, alt: 'line' ,url : '/' },
-    { id: tools.Text, src: text, alt: 'Text',url : '/'  },
+    { id: tools.Text, src: TypeIcon, alt: 'Text',url : '/'  },
+    { id: tools.Pen, src: Pen, alt: 'Pen' ,url : '/'  },
+    { id: tools.Line, src: Minus, alt: 'line' ,url : '/' },
+    {id:tools.Circle,src:Circle,alt:'Circle',url:'/'},
+    { id: tools.Rectangle, src: Square, alt: 'Rectangle',url : '/'  },
+    { id: tools.Eraser, src: Eraser, alt: 'Eraser',url : '/'  },
+    { id: tools.Select, src: SquareMousePointer, alt: 'Select' , url : '/' },
+    { id: tools.Move, src: Hand, alt: 'Move',url : '/'  },
 ];
 
 const Backgrounds = {

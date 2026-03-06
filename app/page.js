@@ -1,4 +1,4 @@
-import Home from "./components/board/draw"
+import Home from "./components/UI/Home"
 import Options from "./components/fileMenu/options"
 import Menu from "./components/menu/menu"
 import Toolbar from "./components/toolbar/toolbar"
