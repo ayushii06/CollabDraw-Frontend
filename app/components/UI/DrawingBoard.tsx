@@ -1,23 +1,14 @@
 import React from "react";
-import { ElementWithPosition } from "../../utils/elementUtility";
-import { Elements } from "../../hooks/useHistory";
-import { SelectedElement } from "./Home";
-import { handlePointerDown } from "../engine/Interaction/handlePointerDown";
+import { handlePointerDown } from "../../engine/interaction/handlePointerDown";
 import { useAppSelector } from "../../hooks/reduxHooks";
-import { elementType, Options } from "../../lib/types";
-import { handlePointerUp } from "../engine/Interaction/handlePointerUp";
-import { handlePointerMove } from "../engine/Interaction/handlePointerMove";
-import { handlePointerDoubleClick } from "../engine/Interaction/handlePointerDoubleClick";
+import { elementType, Options,Offset, ElementWithPosition } from "../../models/types";
+import { handlePointerUp } from "../../engine/interaction/handlePointerUp";
+import { handlePointerMove } from "../../engine/interaction/handlePointerMove";
+import { handlePointerDoubleClick } from "../../engine/interaction/handlePointerDoubleClick";
+import { SetHistoryState } from "../../models/history/history";
+import { SelectedElement } from "../../models/element/setSelectedElement";
 
-type Offset = {
-  x: number;
-  y: number;
-};
 
-export type SetHistoryState = (
-  action: Elements | ((prev: Elements) => Elements),
-  overwrite?: boolean,
-) => void;
 
 interface PropsType {
   canvaBg: string;
@@ -38,7 +29,6 @@ interface PropsType {
     width: number;
     height: number;
   };
-  ctx:CanvasRenderingContext2D|null;
 }
 
 function DrawingBoard({
@@ -57,36 +47,22 @@ function DrawingBoard({
   startPanMousePosition,
   eraser,
   windowSize,
-  ctx
 }: PropsType) {
-  const tool = useAppSelector((state)=>state.toolbar.tool);
-  const color = useAppSelector((state) => state.menu[tool]?.color || "black");
-  const size = useAppSelector((state) => state.menu[tool]?.size || 5);
-  const thinning = useAppSelector((state) => state.menu[tool]?.thinning || 0.5);
-  const smoothing = useAppSelector(
-    (state) => state.menu[tool]?.smoothing || 0.5,
-  );
-  const streamline = useAppSelector(
-    (state) => state.menu[tool]?.streamline || 0.5,
-  );
-  const fill = useAppSelector((state) => state.menu[tool]?.fill || "white");
-  const style = useAppSelector((state) => state.menu[tool]?.style || "solid");
-  const fillStyle = useAppSelector(
-    (state) => state.menu[tool]?.fillStyle || "solid",
-  );
-  // const text = useAppSelector((state) => state.menu[text]);
+  const settings = useAppSelector((state) => state.menu);
+  // console.log("ebgfbfrg",settings);
+  const tool = useAppSelector((state) => state.toolbar.tool);
 
   const options: Options = {
-    color: color,
-    size: size,
-    thinning: thinning,
-    smoothing: smoothing,
-    streamline: streamline,
-    fill: fill,
-    fillStyle: fillStyle,
-    style: style,
-    // text: text,
+    strokeColor: settings.strokeColor,
+    size: settings.size,
+    thinning: settings.thinning,
+    smoothing: settings.smoothing,
+    streamline: settings.streamline,
+    fillColor: settings.fillColor,
+    strokeStyle: settings.strokeStyle,
   };
+
+  // console.log(options);
 
   return (
     <canvas
@@ -130,7 +106,6 @@ function DrawingBoard({
           setSelectedElement,
           setStartPanMousePosition,
           options,
-          ctx
         });
       }}
       onPointerUp={(e) => {
@@ -145,7 +120,7 @@ function DrawingBoard({
           options,
           panOffset,
           scaleOffset,
-          scale 
+          scale,
         });
       }}
       onPointerMove={(e) => {
@@ -161,7 +136,7 @@ function DrawingBoard({
           options,
           panOffset,
           scaleOffset,
-          scale 
+          scale,
         });
       }}
       onPointerMoveCapture={(e) =>
@@ -172,9 +147,11 @@ function DrawingBoard({
           eraser,
           panOffset,
           scaleOffset,
-          scale 
+          scale,
         })
       }
+
+      
       // onPointerLeave={(e) => {
       //   handlePointerUp({
       //     e,
@@ -187,7 +164,7 @@ function DrawingBoard({
       //     options,
       //     panOffset,
       //     scaleOffset,
-      //     scale 
+      //     scale
       //   });
       // }}
     ></canvas>

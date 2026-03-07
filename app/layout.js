@@ -3,18 +3,18 @@ import localFont from "next/font/local";
 import "./globals.css";
 
 const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
+  src: "/assets/fonts/GeistMonoVF.woff",
   variable: "--font-geist-sans",
   weight: "100 900",
 });
 const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
+  src: "/assets/fonts/GeistMonoVF.woff",
   variable: "--font-geist-mono",
   weight: "100 900",
 });
 
 import { Provider } from 'react-redux';
-import { store } from './store'; // Adjust path if necessary
+import { store } from './store/store'; // Adjust path if necessary
 
 export default function RootLayout({ children }) {
   return (

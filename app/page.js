@@ -6,7 +6,7 @@ import Toolbar from "./components/toolbar/toolbar"
 export default function Page() {
   return (
     <>
-      <Menu />
+    <Menu/>
       <Toolbar />
       <Home /> 
       <Options/>

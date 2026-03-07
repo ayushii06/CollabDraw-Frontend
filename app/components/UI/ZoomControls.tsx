@@ -3,7 +3,7 @@ import plus from "../../../public/toolbar/plus.svg";
 import minus from "../../../public/toolbar/minus.svg";
 import { useEffect } from "react";
 import { usePressedKeys } from "../../hooks/usePressedKeys";
-import { Offset } from "./Home";
+import { Offset } from "../../models/types";
 
 interface ZoomProps {
   scale: number;

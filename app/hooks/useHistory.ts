@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { ElementWithPosition } from "../utils/elementUtility";
-import { elementType } from "../lib/types";
+import { elementType ,ElementWithPosition} from "../models/types";
 
 export type Elements = elementType[];
 

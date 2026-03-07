@@ -24,3 +24,45 @@ canvas{
   width: 100vw;
   height: 100vh;
 }
+
+.slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 999px;
+  background: #e5e7eb;
+  outline: none;
+  cursor: pointer;
+}
+
+/* track */
+.slider::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 999px;
+}
+
+/* thumb */
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  height: 16px;
+  width: 16px;
+  border-radius: 50%;
+  background: #3b82f6;
+  border: 3px solid white;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.25);
+  margin-top: -5px;
+  transition: transform 0.15s ease;
+}
+
+.slider::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+}
+
+/* Firefox */
+.slider::-moz-range-thumb {
+  height: 16px;
+  width: 16px;
+  border-radius: 50%;
+  background: #3b82f6;
+  border: none;
+}

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
-import { Offset } from "./Home";
-import { handleBlur } from "../../utils/handleBlur";
-import { elementType } from "../../lib/types";
+import { handleBlur } from "../../engine/elements/handleBlur";
+import { elementType, SetHistoryState } from "../../models/types";
+import { Offset } from "../../models/types";
 
 interface propsType {
   selectedElement: elementType;
@@ -9,11 +9,17 @@ interface propsType {
   scale: number;
   scaleOffset: Offset;
   setAction: React.Dispatch<React.SetStateAction<string>>;
-  setSelectedElement: React.Dispatch<
-    React.SetStateAction<elementType>
-  >;
+  setSelectedElement: React.Dispatch<React.SetStateAction<elementType>>;
   action: string;
+  elements: Array<elementType>;
+  setElements: SetHistoryState;
+  setPanOffset: React.Dispatch<React.SetStateAction<Offset>>;
 }
+
+/*
+---------------------------------------------------------------------------------
+-----------------------------x TextEditor x--------------------------------------
+*/
 
 function TextEditor({
   selectedElement,
@@ -23,6 +29,9 @@ function TextEditor({
   action,
   setAction,
   setSelectedElement,
+  elements,
+  setElements,
+  setPanOffset,
 }: propsType) {
   const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
   if (selectedElement.tool != "text") {
@@ -30,15 +39,15 @@ function TextEditor({
   }
 
   useEffect(() => {
-  const textArea = textAreaRef.current;
+    const textArea = textAreaRef.current;
 
-  if (action === "write" && textArea && selectedElement) {
-    setTimeout(() => {
-      textArea.focus();
-      textArea.value = selectedElement.text;
-    }, 0);
-  }
-}, [action, selectedElement]);
+    if (action === "write" && textArea && selectedElement) {
+      setTimeout(() => {
+        textArea.focus();
+        textArea.value = selectedElement.text;
+      }, 0);
+    }
+  }, [action, selectedElement]);
 
   return (
     <textarea
@@ -48,11 +57,14 @@ function TextEditor({
           selectedElement,
           setAction,
           setSelectedElement,
+          elements,
+          setElements,
+          setPanOffset,
         });
       }}
       ref={textAreaRef}
       style={{
-        position: "relative",
+        position: "absolute",
         top:
           (selectedElement.y1 - 2) * scale +
           panOffset.y * scale -
@@ -60,7 +72,7 @@ function TextEditor({
         left: selectedElement.x1 * scale + panOffset.x * scale - scaleOffset.x,
         font: `${selectedElement.size * scale}px Comic Sans MS`,
         fontWeight: "bold",
-        color: selectedElement.color,
+        strokeColor: selectedElement.strokeColor,
         resize: "none",
         outline: "none",
         backgroundColor: "transparent",

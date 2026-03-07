@@ -6,24 +6,15 @@ import OptionControls from "./OptionControls";
 import DrawingBoard from "./DrawingBoard";
 import { useHistory } from "../../hooks/useHistory";
 import { useDispatch } from "react-redux";
-import { setIsDownload, setIsReset } from "../../slice/optionsSlice";
-import rough from "roughjs/bundled/rough.esm";
-import { drawElement } from "../../utils/drawElement";
-import { downloadCanvas } from "../../hooks/downloadCanvas";
+import { setIsDownload, setIsReset } from "../../store/slice/optionsSlice";
+import { drawElement } from "../../engine/render/drawElement";
+import { downloadCanvas } from "../../utils/downloadCanvas/downloadCanvas";
 import { useAppSelector } from "../../hooks/reduxHooks";
-import { elementType } from "../../lib/types";
+import { SelectedElement } from "../../models/element/setSelectedElement";
+import { Offset } from "../../models/types";
+import { drawHandle, drawSelectionBox } from "../../engine/render/drawSelectionBox";
 
-export type Offset = {
-  x: number;
-  y: number;
-};
 
-export type SelectedElement = elementType & {
-  xOffsets?: Array<number>;
-  yOffsets?: Array<number>;
-  xOffset?: number;
-  yOffset?: number;
-};
 
 function Home() {
   const [panOffset, setPanOffset] = useState<Offset>({ x: 0, y: 0 });
@@ -44,11 +35,12 @@ function Home() {
   const reset = useAppSelector((state) => state.options.isReset);
   const canvaBg = useAppSelector((state) => state.options.backgrounds);
   const dispatch = useDispatch();
-  const canvas = document.getElementById("canvas") as HTMLCanvasElement;
-  const ctx = canvas.getContext("2d");
 
-    
+  
+  
   if (reset) {
+    const canvas = document.getElementById("canvas") as HTMLCanvasElement;
+    const ctx = canvas.getContext("2d");
     ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
     setElements([]);
     dispatch(setIsReset(false));
@@ -91,6 +83,8 @@ function Home() {
   */
   useLayoutEffect(() => {
     // IF USER HAS CLICKED RESET CANVAS BUTTON.
+    const canvas = document.getElementById("canvas") as HTMLCanvasElement;
+  const ctx = canvas.getContext("2d");
     if (reset) {
       ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
 
@@ -120,7 +114,13 @@ function Home() {
     // main rendering loop.
     if (elements) {
       elements.forEach((element) => {
+        // console.log("egfe",element);
         if (action === "write" && selectedElement.id === element.id) return;
+
+        if(element.id === selectedElement?.id){
+       drawSelectionBox(ctx, element)
+       drawHandle(ctx, element)
+   }
 
         drawElement({ctx, element });
       });
@@ -147,12 +147,15 @@ function Home() {
           setStartPanMousePosition={setStartPanMousePosition}
           eraser={eraser}
           windowSize={windowSize}
-          ctx={ctx}
+          
         />
       </div>
 
       {action === "write" ? (
         <TextEditor
+        elements={elements}
+        setElements={setElements}
+        setPanOffset={setPanOffset}
           selectedElement={selectedElement}
           panOffset={panOffset}
           scale={scale}

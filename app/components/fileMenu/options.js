@@ -2,8 +2,8 @@
 import list from '../../../public/toolbar/list.svg'
 import Image from 'next/image'
 import { useState } from 'react'
-import {Backgrounds} from '../../constant'
-import { setBackground,setIsDownload,setIsReset, } from '../../slice/optionsSlice'
+import {CanvaBg} from '../../utils/constants/colors'
+import { setBackground,setIsDownload,setIsReset, } from '../../store/slice/optionsSlice'
 import { useDispatch } from 'react-redux'
 import deletesvg from '../../../public/toolbar/delete.svg'
 import download from '../../../public/toolbar/download.svg'
@@ -84,19 +84,19 @@ export default function Options() {
 
                 <div className="flex items-center justify-start gap-4 py-4">
                     {
-                        Object.keys(Backgrounds).map((color) => (
+                        Object.keys(CanvaBg).map((color) => (
                             <div key={color} 
-                        onClick={() => handleBackground(Backgrounds[color])}
+                        onClick={() => handleBackground(CanvaBg[color])}
                                 className="rounded hover:bg-gray-200" 
                                 style={{
-                                    background: current === Backgrounds[color] ? 'rgba(0,0,0,0.1)' : 'transparent',
+                                    background: current === CanvaBg[color] ? 'rgba(0,0,0,0.1)' : 'transparent',
                                     cursor: 'pointer',
 
                                 }}
             
 
                             >
-                                 <div className=" m-1 w-4 h-4" style={{ backgroundColor: Backgrounds[color] 
+                                 <div className=" m-1 w-4 h-4" style={{ backgroundColor: CanvaBg[color] 
                                 }}></div>
                                
                             </div>
