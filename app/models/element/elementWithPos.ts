@@ -9,6 +9,10 @@ export type PositionType =
   | "bl"
   | "br"
   | "inside"
+  | "top"
+  | "bottom"
+  | "left"
+  | "right"
   | null;
 
 export type ElementWithPosition = elementType & {

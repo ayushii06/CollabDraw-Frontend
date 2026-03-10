@@ -1,9 +1,10 @@
 import { pointerDown } from "../../models/interaction/interaction";
 import { elementType, ElementWithPosition } from "../../models/types";
-import { getNewId } from "../../utils/constants/counter";
+import { socket } from "../../socket/socketClient";
 import { createElement } from "../elements/createElement";
 import { getElementAtPosition } from "../hitDetection/getElementAtPosition";
 import { getMouseCoordinates } from "../math/getMouseCoordinates";
+import { v4 as uuidv4 } from 'uuid'
 
 /*
 -----------------------------------------------------------------------------------
@@ -29,10 +30,14 @@ Also, we will set the action also based on the type of tool selected!
 
 4. If the tool was select tool, it means we are moving the element or resizing the element.
 
+Very Imp: As we draw a new element, we are going to assign a new ID to it, which should be very unique. This could be done through various ways like using a global counter variable ( which i had done previously, but since I have added collaboration also, counter will repeat! ).
+We could also use Date.now(), but two people drawing at same time, would lead to duplication of ID.
+
+That's why I have used UUID, that will create a new random and unqique ids for all elements.
 
 */
 
-const handlePointerDown = ({ e, panOffset, scaleOffset, scale, action, setAction, tool, elements, setElements, setSelectedElement, setStartPanMousePosition,options }: pointerDown) => {
+const handlePointerDown = ({ e, panOffset, scaleOffset, scale, action, setAction, tool, elements, setElements, setSelectedElement, setStartPanMousePosition, options }: pointerDown) => {
 
 
       // If during typing, user has clicked by mistake somewhere, we need to continue typing only.
@@ -50,7 +55,7 @@ const handlePointerDown = ({ e, panOffset, scaleOffset, scale, action, setAction
       // 0	left click 
       // 1	middle click 
       // 2	right click
-      
+
       if ("button" in e) {
             if (e.button === 1) {
                   setAction("panning");
@@ -71,11 +76,18 @@ const handlePointerDown = ({ e, panOffset, scaleOffset, scale, action, setAction
       else if (tool === 'select') {
             //checks if the mouse is over an element and if yes, it returns that element with the position where our cursor was at (inside? , top-left? , start? etc)
 
-            const element:ElementWithPosition = getElementAtPosition(x, y, elements);
-            console.log("The element selected by select tool - ", element);
-            
+            const element: ElementWithPosition = getElementAtPosition(x, y, elements);
+
+            // console.log("The element selected by select tool - ", element);
+
+            if (!element) {
+                  setSelectedElement(null);
+
+            }
 
             if (element) {
+
+
                   // if the selected element was pen, we will map new point with respect to current mous coordinates
                   if (element.tool === 'pen') {
                         const xOffsets = element.points.map(point => x - point.x);
@@ -89,6 +101,8 @@ const handlePointerDown = ({ e, panOffset, scaleOffset, scale, action, setAction
                         setSelectedElement({ ...element, xOffset, yOffset });
                   }
                   setElements(prevState => prevState);
+                  socket.emit("draw-element", element);
+
 
                   if (element.position === 'inside') {
                         setAction('move');
@@ -98,49 +112,40 @@ const handlePointerDown = ({ e, panOffset, scaleOffset, scale, action, setAction
                   }
             }
       }
-      else if (tool === 'eraser') {
-            const element = getElementAtPosition(x, y, elements);
-
-            if (element) {
-                  if (element.tool === 'pen') {
-                        const xOffsets = element.points.map(point => x - point.x);
-                        const yOffsets = element.points.map(point => y - point.y);
-
-                        setSelectedElement({ ...element, xOffsets, yOffsets });
-                  }
-                  else {
-
-                        const xOffset = x - element.x1;
-                        const yOffset = y - element.y1;
-                        setSelectedElement({ ...element, xOffset, yOffset });
-                  }
-                  setElements(prevState => prevState);
-
-                  setAction('erase');
-            }
+      else if (tool === "eraser") {
+            setAction("erase");
       }
-      // if the tool was neither of these select, pan or eraser, then it would surely be creating a new element.
       else {
 
-            //OPTIMISATION 2 - Earlier, I assigned the elements.length as id. But it becomes risky, if we delete some elements.
-            // const id = elements.length;
-            
+            // if the tool was neither of these select, pan or eraser, then it would surely be creating a new element.
+
+            //OPTIMISATION 2 - ID assignment.
+            // const id = elements.length;  1st Implementation
+
             // I now changed it to a global variable storing the count.
-            const id:number = getNewId();
+            // const id: number = Date.now()   2nd Implementation
+
+
+            //Correct Unique ID implementation
+            const id: string = uuidv4();
 
             // as told earlier, the initial x1,x2 would be x and y1, y2 would be y.
             const x1 = x;
             const x2 = x;
             const y1 = y;
             const y2 = y;
-            
 
-            const element:elementType = createElement({ id, x1, y1, x2, y2, tool:tool, options });
+            // get the element definition from createElement Function.
+            const element: elementType = createElement({ id, x1, y1, x2, y2, tool: tool, options });
 
-            console.log("actual element",element);
+            // add the element to the elements array
+            setElements(prevState => {
+                  const arr = Array.isArray(prevState) ? prevState : [];
+                  return [...arr, element];
+            });
 
-            //create the element and add the element to the elements array
-            setElements(prevState => [...prevState, element]);
+            // send the created element to all connected clients of the room.
+            socket.emit("draw-element", element);
 
             // We set the selectedElement as this element, because we will be performing the action on this element.
             setSelectedElement(element);
@@ -148,8 +153,7 @@ const handlePointerDown = ({ e, panOffset, scaleOffset, scale, action, setAction
             // Now set the action based on tool
             setAction(tool === 'text' ? 'write' : 'draw');
 
-
       }
 }
 
-export {handlePointerDown};
+export { handlePointerDown };

@@ -34,6 +34,7 @@ export interface pointerMove extends pointerType {
       panOffset:Offset;
       scaleOffset:Offset;
       scale:number;
+      canvas:HTMLCanvasElement|null;
 }
 
 export interface pointerUp extends pointerType {

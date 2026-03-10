@@ -7,7 +7,7 @@ import { Options, strokeStyle } from '../../models/types';
 
 const initialState:Options = {
   strokeColor: strokeColor.BLACK,
-  size: 1,
+  size: 4,
   thinning: 0.1,
   smoothing: 0.1,
   streamline: 0.1,

@@ -1,12 +1,23 @@
 import { PositionType } from "../../models/types";
 
 const positionCursorMap: Record<PositionType, string> = {
-  start: "nesw-resize",
-  end: "nesw-resize",
+  // line endpoints
+  start: "pointer",
+  end: "pointer",
+
+  // corners
   tl: "nwse-resize",
   br: "nwse-resize",
   tr: "nesw-resize",
   bl: "nesw-resize",
+
+  // edges
+  top: "ns-resize",
+  bottom: "ns-resize",
+  left: "ew-resize",
+  right: "ew-resize",
+
+  // moving
   inside: "move",
 };
 
@@ -24,10 +35,11 @@ export const getCursor = (
   position?: PositionType
 ): string => {
 
+  // resize or move cursor when hovering element
   if (position) {
     return positionCursorMap[position] ?? "default";
   }
 
-  // tool cursors
+  // cursor based on tool
   return toolCursorMap[tool] ?? "default";
 };

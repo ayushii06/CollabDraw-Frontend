@@ -1,4 +1,4 @@
-import { Circle, Eraser, Hand, Minus, Pen, Square, SquareMousePointer, TypeIcon } from 'lucide-react'
+import { Circle, Eraser, Hand, Minus, Pen, Square, SquareMousePointer, Trash2Icon, TypeIcon } from 'lucide-react'
 import { ToolBar } from '../../models/types';
 
 const tools: Record<string, ToolBar> = {
@@ -10,6 +10,7 @@ const tools: Record<string, ToolBar> = {
     Circle: 'circle',
     Line: 'line',
     Text: 'text',
+    Reset:'reset',
 } as const;
 
 interface IconItem {
@@ -28,6 +29,7 @@ const icons:IconItem[] = [
     { id: tools.Eraser, src: Eraser, alt: 'Eraser',url : '/'  },
     { id: tools.Select, src: SquareMousePointer, alt: 'Select' , url : '/' },
     { id: tools.Move, src: Hand, alt: 'Move',url : '/'  },
+    { id: tools.Reset, src: Trash2Icon, alt: 'Reset',url : '/'  },
 ];
 
 export {icons,tools};

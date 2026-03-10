@@ -1,7 +1,7 @@
 import { strokeStyle } from "../toolbar/tool";
 
 interface canvasElementType {
-  id: number;
+  id: string;
   strokeColor: string;
   size: number;
 }

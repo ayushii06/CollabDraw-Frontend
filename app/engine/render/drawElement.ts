@@ -30,6 +30,7 @@ const drawElement = ({ ctx, element }: drawElementType) => {
         ctx.setLineDash([2, 4]);
       }
       ctx.stroke();
+      
       break;
 
     case 'rectangle':
@@ -57,6 +58,7 @@ const drawElement = ({ ctx, element }: drawElementType) => {
       break;
 
     case 'circle':
+
 
       const radius = Math.sqrt(
         (element.x2 - element.x1) ** 2 +

@@ -1,9 +1,10 @@
-import { elementType, Options, penType, SetHistoryState, ToolBar,Offset } from "../../models/types";
+import { elementType, Options, penType, SetHistoryState, ToolBar, Offset } from "../../models/types";
+import { socket } from "../../socket/socketClient";
 import { createElement } from "./createElement";
 
 
 interface propsType {
-      id: number;
+      id: string;
       x1: number;
       y1: number;
       x2: number;
@@ -13,6 +14,7 @@ interface propsType {
       setElements?: SetHistoryState;
       setPanOffset?: React.Dispatch<React.SetStateAction<Offset>>;
       options: Options;
+      canvas?: HTMLCanvasElement|null;
 }
 
 /*
@@ -38,7 +40,9 @@ To get detailed knowledge of panning, it's logic is stored in another file.
 And, at the end, we are using setElements(), to store the elements in the array.
 */
 
-const updateElement = ({ id, x1, y1, x2, y2, tool, options, elements, setElements, setPanOffset }: propsType) => {
+const updateElement = ({ id, x1, y1, x2, y2, tool, options, elements, setElements, setPanOffset ,canvas}: propsType) => {
+
+      
 
       // To maintain immutability, instead of modifying elements[id], we created a copy:
       // elementsCopy and update that.
@@ -51,33 +55,41 @@ const updateElement = ({ id, x1, y1, x2, y2, tool, options, elements, setElement
 
       const elementsCopy = [...elements];
 
+      // find the index of element in the elements array (because now the index is generated using uuid)
+      const index = elementsCopy.findIndex(element => element.id === id);
+      if (index === -1) return;
+
+      // This is the element we want to update
+      const element = elementsCopy[index];
+
       switch (tool) {
             case 'pen':
-                  (elementsCopy[id] as penType).points = [
-                        ...(elementsCopy[id] as penType).points,
+                  (element as penType).points = [
+                        ...(element as penType).points,
                         { x: x2, y: y2 }
                   ];
                   break;
             case 'line':
             case 'rectangle':
             case 'circle':
+                 
+                  const updatedElement = createElement({ id, x1, y1, x2, y2, tool, options });
+                  
+                  elementsCopy[index] = updatedElement;
 
-                  const canvas = document.getElementById("canvas") as HTMLCanvasElement;
-                  const ctx = canvas.getContext("2d"); //get the context of the canvas
-                  // recreates the new element
-                  elementsCopy[id] = createElement({ id, x1, y1, x2, y2, tool, options });
-                  console.log("elemennt is ", elementsCopy[id]);
+                  // console.log("elemennt is ", elementsCopy[index]);
                   break;
 
 
             case 'text':
 
+                  const ctx = canvas?.getContext("2d");
                   const textWidth = ctx.measureText(options.text).width;
 
                   const textHeight = options.size;
 
 
-                  elementsCopy[id] = { ...elementsCopy[id], tool, x1: x1, y1: y1, x2: x1 + textWidth, y2: y1 + textHeight, text: options.text, strokeColor: options.strokeColor, size: options.size };
+                  elementsCopy[id] = { ...elementsCopy[index], tool, x1: x1, y1: y1, x2: x1 + textWidth, y2: y1 + textHeight, text: options.text, strokeColor: options.strokeColor, size: options.size };
 
                   break;
 

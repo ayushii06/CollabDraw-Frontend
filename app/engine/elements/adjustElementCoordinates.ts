@@ -1,7 +1,7 @@
 import { elementType, Tool } from "../../models/types";
 
 const adjustmentRequired = (tool: Tool) =>
-  ["line", "rectangle"].includes(tool);
+  ["line", "rectangle","circle",].includes(tool);
 
 const adjustElementCoordinates = (
   element: elementType

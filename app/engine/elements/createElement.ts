@@ -1,7 +1,7 @@
 import { elementType, Options, ToolBar } from "../../models/types";
 
 interface CreateElementProps {
-  id: number;
+  id: string;
   x1: number;
   y1: number;
   x2: number;

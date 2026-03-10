@@ -1,5 +1,9 @@
 import { pointerUp } from "../../models/interaction/interaction";
+import { socket } from "../../socket/socketClient";
+import { setTool } from "../../store/slice/toolbarSlice";
+import { AppDispatch } from "../../store/store";
 import { adjustElementCoordinates, adjustmentRequired } from "../elements/adjustElementCoordinates";
+import { createElement } from "../elements/createElement";
 import { updateElement } from "../elements/updateElement";
 import { getMouseCoordinates } from "../math/getMouseCoordinates";
 
@@ -12,11 +16,9 @@ as the task must have been finished by the user.
 
 */
 
-const handlePointerUp = ({ e, action, setAction, setSelectedElement, selectedElement, elements,options,setElements,panOffset,scaleOffset,scale }: pointerUp) => {
-      const { x, y } = getMouseCoordinates(e,panOffset,scaleOffset,scale);
+const handlePointerUp = ({ e, action, setAction, setSelectedElement, selectedElement, elements, options, setElements, panOffset, scaleOffset, scale, dispatch }: pointerUp & { dispatch: AppDispatch }) => {
 
-      // console.log(" Mouse Up - ",x,y);
-
+      const { x, y } = getMouseCoordinates(e, panOffset, scaleOffset, scale);
       if (action === 'erase') {
             setAction('none');
             setSelectedElement(null);
@@ -30,16 +32,56 @@ const handlePointerUp = ({ e, action, setAction, setSelectedElement, selectedEle
                         setAction("write");
                         return;
                   }
-                  const index = selectedElement.id
+
+                  const index = elements.findIndex(el => el.id === selectedElement.id)
+
+                  if (index === -1) return;
                   if (index === null) return;
 
+                  const element = elements[index];
+                  // console.log("element for update is ", element)
 
                   const { id, tool } = elements[index];
+
+                  if (tool === "pen") {
+                        socket.emit("draw-element", element);
+                        setAction("none");
+                        return;
+                  }
+
                   if ((action === "draw" || action === "resize") && adjustmentRequired(tool)) {
 
                         const { x1, y1, x2, y2 } = adjustElementCoordinates(elements[index]);
-                        updateElement({id:id, x1:x1, y1:y1, x2:x2, y2:y2, tool:tool,elements:elements,options:options,setElements:setElements});
 
+                        const updatedElement = createElement({
+                              id,
+                              x1,
+                              y1,
+                              x2,
+                              y2,
+                              tool,
+                              options
+                        });
+
+
+                        updateElement({
+                              id,
+                              x1,
+                              y1,
+                              x2,
+                              y2,
+                              tool,
+                              elements,
+                              options,
+                              setElements
+                        });
+
+
+                        socket.emit("draw-element", updatedElement);
+                        // updateElement({ id: id, x1: x1, y1: y1, x2: x2, y2: y2, tool: tool, elements: elements, options: options, setElements: setElements });
+
+                        // socket.emit("draw-element", elements[index]);
+                        dispatch(setTool("select"))
 
                   }
             }
@@ -49,8 +91,11 @@ const handlePointerUp = ({ e, action, setAction, setSelectedElement, selectedEle
 
 
             setAction('none');
-            setSelectedElement(null);
+
+            // Update 1 -- This was not needed, because the selectedElement will be null,
+            // only when user has clicked outside the shape or delted that element.
+            // setSelectedElement(null);
       }
 }
 
-export {handlePointerUp}
+export { handlePointerUp }

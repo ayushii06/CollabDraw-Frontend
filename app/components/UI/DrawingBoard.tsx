@@ -1,10 +1,9 @@
 import React from "react";
 import { handlePointerDown } from "../../engine/interaction/handlePointerDown";
-import { useAppSelector } from "../../hooks/reduxHooks";
+import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks";
 import { elementType, Options,Offset, ElementWithPosition } from "../../models/types";
 import { handlePointerUp } from "../../engine/interaction/handlePointerUp";
 import { handlePointerMove } from "../../engine/interaction/handlePointerMove";
-import { handlePointerDoubleClick } from "../../engine/interaction/handlePointerDoubleClick";
 import { SetHistoryState } from "../../models/history/history";
 import { SelectedElement } from "../../models/element/setSelectedElement";
 
@@ -29,6 +28,7 @@ interface PropsType {
     width: number;
     height: number;
   };
+canvasRef: React.RefObject<HTMLCanvasElement>
 }
 
 function DrawingBoard({
@@ -47,11 +47,13 @@ function DrawingBoard({
   startPanMousePosition,
   eraser,
   windowSize,
+  canvasRef
 }: PropsType) {
   const settings = useAppSelector((state) => state.menu);
   // console.log("ebgfbfrg",settings);
   const tool = useAppSelector((state) => state.toolbar.tool);
-
+  const dispatch = useAppDispatch();
+  const canvas = canvasRef.current;
   const options: Options = {
     strokeColor: settings.strokeColor,
     size: settings.size,
@@ -65,7 +67,10 @@ function DrawingBoard({
   // console.log(options);
 
   return (
+    <>
+    
     <canvas
+    ref={canvasRef}
       id="canvas"
       style={{
         backgroundColor: canvaBg,
@@ -75,7 +80,7 @@ function DrawingBoard({
             : tool === "select"
               ? " move"
               : tool === "eraser"
-                ? "crosshair"
+                ? "none"
                 : tool === "text"
                   ? "text"
                   : tool === "rectangle"
@@ -85,7 +90,7 @@ function DrawingBoard({
                       : tool === "line"
                         ? "crosshair"
                         : tool === "pen"
-                          ? "crosshair"
+                          ? "none"
                           : "default",
         position: "absolute",
         zIndex: 1,
@@ -106,6 +111,7 @@ function DrawingBoard({
           setSelectedElement,
           setStartPanMousePosition,
           options,
+          
         });
       }}
       onPointerUp={(e) => {
@@ -121,6 +127,7 @@ function DrawingBoard({
           panOffset,
           scaleOffset,
           scale,
+          dispatch
         });
       }}
       onPointerMove={(e) => {
@@ -137,21 +144,9 @@ function DrawingBoard({
           panOffset,
           scaleOffset,
           scale,
+          canvas
         });
       }}
-      onPointerMoveCapture={(e) =>
-        handlePointerDoubleClick({
-          e,
-          action,
-          elements,
-          eraser,
-          panOffset,
-          scaleOffset,
-          scale,
-        })
-      }
-
-      
       // onPointerLeave={(e) => {
       //   handlePointerUp({
       //     e,
@@ -168,6 +163,7 @@ function DrawingBoard({
       //   });
       // }}
     ></canvas>
+    </>
   );
 }
 

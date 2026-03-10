@@ -23,7 +23,7 @@ const handleBlur = ({ e, selectedElement, setAction, setSelectedElement ,element
       }
 
       const { id, x1, y1 } = selectedElement;
-      console.log(selectedElement);
+      // console.log(selectedElement);
       setAction("none");
       setSelectedElement(null);
       updateElement({

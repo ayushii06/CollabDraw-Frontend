@@ -12,83 +12,157 @@ const positionWithinElement = (
 
   switch (element.tool) {
 
-        // for line, we will use perpendicular distance of (x,y) to the line
+    // for line, we will use perpendicular distance of (x,y) to the line
 
-        case "line": {
-          const { x1, y1, x2, y2 } = element;
+    case "line": {
+      const { x1, y1, x2, y2 } = element;
 
-          const on = onLine(x1, y1, x2, y2, x, y);
-          const start = nearPoints(x, y, x1, y1, "start");
-          const end = nearPoints(x, y, x2, y2, "end");
+      const on = onLine(x1, y1, x2, y2, x, y);
+      const start = nearPoints(x, y, x1, y1, "start");
+      const end = nearPoints(x, y, x2, y2, "end");
 
-          return start || end || on;
-        }
+      return start || end || on;
+    }
 
-        // for rect
+    // for rect
 
-        case "rectangle": {
-          const { x1, y1, x2, y2 } = element;
+    case "rectangle": {
+      const { x1, y1, x2, y2 } = element;
+      const threshold = 8;
 
-          const topLeft = nearPoints(x, y, x1, y1, "tl");
-          const topRight = nearPoints(x, y, x2, y1, "tr");
-          const bottomLeft = nearPoints(x, y, x1, y2, "bl");
-          const bottomRight = nearPoints(x, y, x2, y2, "br");
+      // In the case, the rectangle is drawn inverted, we need minX and minY.
 
-          const inside =
-            x >= x1 && x <= x2 && y >= y1 && y <= y2
-              ? "inside"
-              : null;
+      const minX = Math.min(x1, x2);
+      const maxX = Math.max(x1, x2);
+      const minY = Math.min(y1, y2);
+      const maxY = Math.max(y1, y2);
 
-          return topLeft || topRight || bottomLeft || bottomRight || inside;
-        }
+      const topLeft = nearPoints(x, y, minX, minY, "tl");
+      const topRight = nearPoints(x, y, maxX, minY, "tr");
+      const bottomLeft = nearPoints(x, y, minX, maxY, "bl");
+      const bottomRight = nearPoints(x, y, maxX, maxY, "br");
 
-        case "circle": {
-          const { x1, y1, x2, y2 } = element;
+      // edges
+      const top = x > minX && x < maxX && Math.abs(y - minY) < threshold
+        ? "top"
+        : null;
 
-          const center = {
-            x: (x1 + x2) / 2,
-            y: (y1 + y2) / 2,
-          };
+      const bottom =
+        x > minX && x < maxX && Math.abs(y - maxY) < threshold
+          ? "bottom"
+          : null;
 
-          const radius = distance(center, { x: x1, y: y1 });
+      const left =
+        y > minY && y < maxY && Math.abs(x - minX) < threshold
+          ? "left"
+          : null;
 
-          const insideCircle =
-            distance(center, { x, y }) < radius;
+      const right =
+        y > minY && y < maxY && Math.abs(x - maxX) < threshold
+          ? "right"
+          : null;
 
-          return insideCircle ? "inside" : null;
-        }
 
-        case "pen": {
-          const betweenAnyPoint = element.points.some(
-            (point, index) => {
-              const nextPoint = element.points[index + 1];
-              if (!nextPoint) return false;
 
-              return (
-                onLine(
-                  point.x,
-                  point.y,
-                  nextPoint.x,
-                  nextPoint.y,
-                  x,
-                  y,
-                  5
-                ) != null
-              );
-            }
+      const inside = x >= minX && x <= maxX && y >= minY && y <= maxY ? "inside" : null;
+
+      return (
+        topLeft ||
+        topRight ||
+        bottomLeft ||
+        bottomRight ||
+        top ||
+        bottom ||
+        left ||
+        right ||
+        inside
+      );
+
+    }
+
+    case "circle": {
+      const { x1, y1, x2, y2 } = element;
+
+      const minX = Math.min(x1, x2);
+      const maxX = Math.max(x1, x2);
+      const minY = Math.min(y1, y2);
+      const maxY = Math.max(y1, y2);
+
+      const threshold = 6;
+
+      const topLeft = nearPoints(x, y, minX, minY, "tl");
+      const topRight = nearPoints(x, y, maxX, minY, "tr");
+      const bottomLeft = nearPoints(x, y, minX, maxY, "bl");
+      const bottomRight = nearPoints(x, y, maxX, maxY, "br");
+
+      const top =
+        x > minX && x < maxX && Math.abs(y - minY) < threshold
+          ? "top"
+          : null;
+
+      const bottom =
+        x > minX && x < maxX && Math.abs(y - maxY) < threshold
+          ? "bottom"
+          : null;
+
+      const left =
+        y > minY && y < maxY && Math.abs(x - minX) < threshold
+          ? "left"
+          : null;
+
+      const right =
+        y > minY && y < maxY && Math.abs(x - maxX) < threshold
+          ? "right"
+          : null;
+
+      const inside =
+        x >= minX && x <= maxX && y >= minY && y <= maxY
+          ? "inside"
+          : null;
+
+      return (
+        topLeft ||
+        topRight ||
+        bottomLeft ||
+        bottomRight ||
+        top ||
+        bottom ||
+        left ||
+        right ||
+        inside
+      );
+    }
+    case "pen": {
+      const betweenAnyPoint = element.points.some(
+        (point, index) => {
+          const nextPoint = element.points[index + 1];
+          if (!nextPoint) return false;
+
+          return (
+            onLine(
+              point.x,
+              point.y,
+              nextPoint.x,
+              nextPoint.y,
+              x,
+              y,
+              5
+            ) != null
           );
-
-          return betweenAnyPoint ? "inside" : null;
         }
+      );
 
-        case "text": {
-          const { x1, y1, x2, y2 } = element;
+      return betweenAnyPoint ? "inside" : null;
+    }
 
-          return x >= x1 && x <= x2 && y >= y1 && y <= y2
-            ? "inside"
-            : null;
-        }
+    case "text": {
+      const { x1, y1, x2, y2 } = element;
+
+      return x >= x1 && x <= x2 && y >= y1 && y <= y2
+        ? "inside"
+        : null;
+    }
   }
 };
 
-export {positionWithinElement}
+export { positionWithinElement }

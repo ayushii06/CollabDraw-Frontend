@@ -13,7 +13,7 @@ export default function Menu() {
   const activeTool = useAppSelector((state) => state.toolbar.tool);
 
   const settings = useAppSelector((state) => state.menu);
-  console.log(settings);
+  // console.log(settings);
   // --- Change Handlers (Dispatching directly to Redux) ---
 
   const changeStrokeColor = (value: string) => dispatch(setStrokeColor(value));
@@ -54,8 +54,8 @@ export default function Menu() {
     <>
       {(showStrokeTool || showColorTool || showPenTool || showFillTool) && (
         <div
-          className="absolute top-4 left-4 w-64 bg-white border border-gray-200 rounded-xl shadow-lg p-4 space-y-5 max-h-[420px] overflow-y-auto"
-          style={{ zIndex: 100 }}
+          className="absolute top-4 right-4 w-64 bg-white border border-gray-200 z-40  rounded-xl shadow-lg p-4 space-y-5 max-h-[420px] overflow-y-auto"
+          
         >
           {/* COLOR SECTION */}
           {showColorTool && (
@@ -99,7 +99,8 @@ export default function Menu() {
               <input
                 type="range"
                 min="1"
-                max={activeTool === "text" ? 100 : 50}
+                max={activeTool === "text" ? 100 : 10}
+                
                 value={settings.size}
                 onChange={(e) => changeSize(Number(e.target.value))}
                 className="slider"

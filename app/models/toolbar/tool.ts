@@ -5,7 +5,7 @@ export type Tool =
   | "pen"
   | "text";
 
-export type ToolBar = "select" | "pan" | "line" | "rectangle" | "circle" | "text" | "eraser" |"pen"
+export type ToolBar = "select" | "pan" | "line" | "rectangle" | "circle" | "text" | "eraser" |"pen" | "reset"
 
 export type strokeStyle = "Solid" | "Dotted" | "Dashed";
 
