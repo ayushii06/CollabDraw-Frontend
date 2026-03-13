@@ -1,3 +1,8 @@
+![Next.js](https://img.shields.io/badge/Next.js-Frontend-black)
+![React](https://img.shields.io/badge/React-UI-blue)
+![TailwindCSS](https://img.shields.io/badge/TailwindCSS-Styling-38BDF8)
+![Socket.IO](https://img.shields.io/badge/Realtime-Socket.IO-black)
+![License](https://img.shields.io/badge/license-MIT-green)
 # Introduction
 
 Hello Everyone, I welcome you to the official GitHub repository of **CollabDraw** – a real-time collaborative drawing platform where you can draw, brainstorm, and have fun with friends or teammates on the same canvas.
