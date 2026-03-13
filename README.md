@@ -1,77 +1,116 @@
+# Introduction
 
-# Drawing Whiteboard Tool
+Hello Everyone, I welcome you to the official GitHub repository of **CollabDraw** – a real-time collaborative drawing platform where you can draw, brainstorm, and have fun with friends or teammates on the same canvas.
 
-A powerful and interactive drawing whiteboard tool built with the MERN Stack. This application enables users to create and manipulate drawings with various customizable settings, making it ideal for artists, designers, and anyone looking to explore their creativity.
+Whether you're sketching ideas, teaching concepts, or simply drawing for fun, CollabDraw lets multiple users collaborate instantly.
 
+Allow me to introduce you to all the features and how you can use it!
 
+# What is CollabDraw?
 
+Just as the name suggests, CollabDraw is a **real-time collaborative whiteboard application** where multiple users can draw together on the same canvas.
 
-## Features
-
-- **Shape Drawing** : Create a variety of shapes and freehand drawings on the canvas.
-- **Color Customization** : Change the color of shapes and strokes to suit your design.
-- **Width and Style Adjustment** : Modify stroke width, fill styles, and stroke styles.
-- **Move and Zoom** : Move elements around the canvas and zoom in or out for detailed work.
-- **Undo/Redo** : Reverse or reapply actions to achieve the perfect result.
-- **Download Canvas** : Save your artwork as an image directly from the tool.
-
-## Tech Stack
-
-- Next.js , ReactJs , ReduxToolkit
-- RoughJs , Perfect-Freehand 
-- TailwindCSS
+It is designed with a **simple and intuitive interface**, making it easy for anyone to start drawing instantly — no signups required.
 
 
+# How to Begin
 
-## Installation
+1. Open the shared CollabDraw link.
+2. Join the room instantly.
+3. Start drawing with your friends.
 
-1. Clone the repository.
+That's it — no login or setup needed!
+
+# Features
+
+### Drawing Tools
+
+- **Pen** : Draw freely with smooth strokes. You can use your stylus or mouse or just your fingers if you have touchscreen .
+
+- **Rectangle, Circle, Line** : Choose any of the shape you want to draw, and just start drawing!
+
+- **Text** : Want to write something? Use Text tool and write in different style and size. *(Currenlty supports English text)*.
+
+- **Erase** : Did not like what your draw? Don't worry, you have eraser tool also. Just select the tool and erase any of you drawing.
+
+### Canvas Controls
+
+- **Undo** : Want to undone your action? Click on Undo command!
+
+- **Redo** : Want to redone your action? Click on Redo command!
+  
+- **Resize** : You have drawn a shape, but now you want to decrease its area. Don't worry, you need not to re-draw anything. Just select the shape and resize it.
+
+- **Move**: Want to move a shape to newer place? Just click on select tool and select the shape and drag and drop it!
+
+- **Zoom** : Want to increase or decrease the canvas area? Use our zoom tool and the canvas will zoom in or out.
+
+- **Pan**: Want to move canvas? Use Pan Tool and move your canvas!
+
+- **Reset**: Want to clear all drawings and reset to original state? Just click on reset tool! (Remember this action is irreversible!)
+
+- **Save Your Drawing**: You can click on download button and the drawing will be saved as image in your desktop!
+
+### Collaboration Tool:
+
+- **Invite Someone**: Drawing alone is too boring right? Invite your friends and family to join the room and share your drawing together!
+
+- **Leave Room**: Whenever you are done drawing, you can click leave room to exit.
+ 
+## Toolbar
+
+The horizontal toolbar at the botton centre of your screen has all the tools you would required! Hover over the tool to get it's name in case you can not understand the tool from its image.
+
+## Menu Toolbar
+
+Whenever you will select any drawing tool like pen, circle , line or rectangle, you will see a menu toolbar in right of your screen. This will contains options like stroke color, stroke width, fill color, stoke style. You can customize as per your need.
+
+# Tech Stack
+
+Frontend
+- **Next.js**
+- **React**
+- **TailwindCSS**
+- **Socket.IO Client**
+- **Perfect Freehand**
+
+Backend
+- **Node.js**
+- **Express**
+- **Socket.IO**
+
+# Backend Repository
+
+Backend code is available here:
+
+http://github.com/ayushii06/CollabDraw-Backend
+
+# Contributing
+
+CollabDraw is an **open-source project**, and contributions are welcome.
+
+You can:
+- Open issues
+- Suggest improvements
+- Submit pull requests
+
+# Author
+
+**Ayushi Pal**  
+https://github.com/ayushii06
 
 
-```bash
-  git clone https://github.com/ayushii06/drawTool
-```
-2. Install dependencies
+# License
 
-```bash
-  npm install
-  ```
-
-3. Start the server
-
-```bash
-   npm run dev
-   ```
-
-## Demo
-
-**[Link](https://draw-tool-seven.vercel.app/)**
-
-## Screenshots
-
-![Website Screenshot](https://i.ibb.co/Pr0bHLq/Screenshot-2024-11-10-171558.png)
-
-![Working Screenshot](https://i.ibb.co/kmSgCmx/Screenshot-2024-11-10-172804.png)
+Distributed under the **MIT License**.
 
 
-## Feedback
+# Personal Note
 
-If you have any feedback, please reach out to me at ayushipal06@gmail.com
+I built CollabDraw to create a space where people can **express creativity together**.  
+Drawing is for everyone — regardless of age, background, or location.
 
+I hope this tool helps you share ideas, collaborate, and enjoy creative moments with friends and family.
 
-## Contributing
-
-Contributions, issues, and feature requests are welcome! Feel free to check the issues page to see any open issues or make a pull request.
-
-## Acknowledgements
-
- - [Perfect-Freehand Library](https://github.com/steveruizok/perfect-freehand)
- - [RoughJs Library](https://github.com/rough-stuff/rough)
-## License
-
-Distributed under the MIT License.
-
-## Authors
-
-- [AYUSHI PAL](https://www.github.com/ayushii06)
+Happy Drawing! 🎨
 
