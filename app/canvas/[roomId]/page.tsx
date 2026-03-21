@@ -32,7 +32,7 @@ function Page() {
   const params = useParams();
   useEffect(() => {
   if (params?.roomId) {
-    setRoomId(params.roomId as string);
+    setRoomId(params.roomId);
   }
 }, [params.roomId]);
 
