@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import Toolbar from "../../components/toolbar/toolbar";
 import Menu from "../../components/menu/menu";
 import Canvas from "../../components/UI/Canvas";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { socket } from "../../socket/socketClient";
 import { AnimatedSpinner } from "../../components/alerts/spinner";
 import { NotFound } from "../../components/alerts/Error";
@@ -17,7 +17,7 @@ import { useCanvas } from "../../context/canvasContext/useCanvas";
 import { useHistory } from "../../hooks/useHistory";
 import { useSocketEvents } from "../../hooks/socketHooks";
 
-function Page() {
+function RoomClient({id}:{id:string}) {
   const router = useRouter();
   const { roomId,setRoomId, userId, setUserId, setUsers,setLastJoined,setLastLeft } = useRoom();
   const { cursors, setCursors } = useCanvas();
@@ -29,12 +29,12 @@ function Page() {
   const [elements, setElements, undo, redo, eraser, resetCanvas] = useHistory(
     [],
   );
-  const params = useParams();
   useEffect(() => {
-  if (params?.roomId) {
-    setRoomId(params.roomId);
+  if (id) {
+    setRoomId(id);
   }
-}, [params.roomId]);
+}, [id]);
+
 
   useEffect(() => {
     const storedName = localStorage.getItem("username");
@@ -141,4 +141,5 @@ function Page() {
   );
 }
 
-export default Page;
+export default RoomClient;
+

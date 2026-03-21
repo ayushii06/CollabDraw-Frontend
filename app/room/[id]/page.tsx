@@ -1,9 +1,10 @@
 import RoomForm from "../../components/room/RoomForm"
 
-export default function JoinRoomPage({
+export default async function JoinRoomPage({
   params,
 }: {
-  params: { id: string }
+  params: Promise<{ id: string }>;
 }) {
-  return <RoomForm mode="join" id={params.id} />
+  const {id} = await params;
+  return <RoomForm mode="join" id={id} />
 }
