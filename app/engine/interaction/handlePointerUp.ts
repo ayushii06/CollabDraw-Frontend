@@ -1,7 +1,5 @@
 import { pointerUp } from "../../models/interaction/interaction";
 import { socket } from "../../socket/socketClient";
-import { setTool } from "../../store/slice/toolbarSlice";
-import { AppDispatch } from "../../store/store";
 import { adjustElementCoordinates, adjustmentRequired } from "../elements/adjustElementCoordinates";
 import { createElement } from "../elements/createElement";
 import { updateElement } from "../elements/updateElement";
@@ -16,7 +14,7 @@ as the task must have been finished by the user.
 
 */
 
-const handlePointerUp = ({ e, action, setAction, setSelectedElement, selectedElement, elements, options, setElements, panOffset, scaleOffset, scale, dispatch }: pointerUp & { dispatch: AppDispatch }) => {
+const handlePointerUp = ({ e, action,roomId, setAction, setSelectedElement, selectedElement, elements, options, setElements, panOffset, scaleOffset, scale, setSelectedTool }: pointerUp ) => {
 
       const { x, y } = getMouseCoordinates(e, panOffset, scaleOffset, scale);
       if (action === 'erase') {
@@ -44,7 +42,7 @@ const handlePointerUp = ({ e, action, setAction, setSelectedElement, selectedEle
                   const { id, tool } = elements[index];
 
                   if (tool === "pen") {
-                        socket.emit("draw-element", element);
+                        socket.emit("sync-element", {roomId,element});
                         setAction("none");
                         return;
                   }
@@ -77,11 +75,11 @@ const handlePointerUp = ({ e, action, setAction, setSelectedElement, selectedEle
                         });
 
 
-                        socket.emit("draw-element", updatedElement);
+                        socket.emit("sync-element", {roomId,element:updatedElement});
                         // updateElement({ id: id, x1: x1, y1: y1, x2: x2, y2: y2, tool: tool, elements: elements, options: options, setElements: setElements });
 
                         // socket.emit("draw-element", elements[index]);
-                        dispatch(setTool("select"))
+                        setSelectedTool("select")
 
                   }
             }

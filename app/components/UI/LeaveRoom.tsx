@@ -1,33 +1,6 @@
-"use client"
 import { SquareArrowRightExit } from "lucide-react"
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { socket } from "../../socket/socketClient";
 
-export default function LeaveRoom() {
-
-  const [leaving, setLeaving] = useState(false);
-  const router = useRouter();
-
-  const leaveRoom = () => {
-    setLeaving(true);
-    socket.emit("leave-room");
-  };
-
-  useEffect(() => {
-
-    const handleLeft = () => {
-      router.push("/");
-    };
-
-    socket.on("left-room", handleLeft);
-
-    return () => {
-      socket.off("left-room", handleLeft);
-    };
-
-  }, []);
-
+export default function LeaveRoom({handleLeaveRoom,leaving}) {
   return (
     <>
       {/* Leaving Screen */}
@@ -54,7 +27,7 @@ export default function LeaveRoom() {
         px-2 py-2
         shadow-lg
         "
-        onClick={leaveRoom}
+        onClick={handleLeaveRoom}
       >
         <SquareArrowRightExit
           className="rotate-180 flex-shrink-0"

@@ -89,9 +89,6 @@ const drawElement = ({ ctx, element }: drawElementType) => {
 
       const stroke = getStroke(element.points, {
         size: element.size,
-        smoothing: element.smoothing,
-        thinning: element.thinning,
-        streamline: element.streamline,
       });
 
       const path = getSvgPathFromStroke(stroke);

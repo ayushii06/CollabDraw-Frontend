@@ -3,6 +3,8 @@
 import { useEffect } from "react";
 import { socket } from "../socket/socketClient";
 import ToasterDemo from "../components/alerts/Toaster";
+import { userType } from "../components/room/RoomToolbar";
+import { elementType } from "../models/types";
 
 /*
 ----------------------------------------------------------------------------
@@ -16,88 +18,143 @@ When will setElements be changed?
       4. Reseting the Canvas.
 */
 
-export const useSocketEvents = ({ setElements, setCursors }) => {
+export const useSocketEvents = ({ userId, roomId, username, setUsers, setConnected, setError, setElements, setCursors, setLastLeft, setLastJoined }) => {
 
       useEffect(() => {
+            if (!userId || !username) return;
 
-            const handleDraw = (element) => {
-                  // console.log("SOCKET DRAW RECEIVED:", element);
+            if (!socket.connected) {
+                  socket.connect();
+            }
 
-                  if (!element || typeof element !== "object") return;
+            const handleElementSync = (element: elementType) => {
+                  console.group("🔄 ELEMENT SYNC");
+
+                  console.log("📥 Incoming element:", element);
+
+                  if (!element || !element.id) {
+                        console.error("❌ Invalid element received:", element);
+                        console.groupEnd();
+                        return;
+                  }
+                  
 
                   setElements(prev => {
+                        console.log("📦 Previous state:", prev);
 
-                        const safePrev = Array.isArray(prev) ? prev : [];
+                        const index = prev.findIndex(el => el.id === element.id);
 
-                        const index = safePrev.findIndex(el => el.id === element.id);
+                        console.log("🔍 Found index:", index);
 
                         if (index === -1) {
-                              return [...safePrev, element];
+                              console.log("➕ Adding new element");
+
+                              const newState = [...prev, element];
+
+                              console.log("📤 New state:", newState);
+                              console.groupEnd();
+
+                              return newState;
                         }
 
-                        const copy = [...safePrev];
+                        console.log("♻️ Updating existing element");
+
+                        const copy = [...prev];
+                        console.log("🧬 Before update:", copy[index]);
+
                         copy[index] = element;
 
-                        return copy;
+                        console.log("🧬 After update:", copy[index]);
+                        console.log("📤 New state:", copy);
+                        console.groupEnd();
 
+                        return copy;
                   });
             };
 
-            const handleUpdate = ((element) => {
-
-                  setElements(prev => {
-
-                        const safePrev = Array.isArray(prev) ? prev : [];
-
-                        const index = safePrev.findIndex(el => el.id === element.id);
-
-                        if (index === -1) return safePrev;
-
-                        const copy = [...safePrev];
-                        copy[index] = element;
-
-                        return copy;
+            socket.on("connect", () => {
+                  socket.emit("join-room", {
+                        roomId,
+                        username: username,
+                        userId: userId,
                   });
+            });
 
-            })
+            socket.on("room-joined", ({ users, elements }: { users: userType[], elements: Array<elementType> }) => {
+                  console.log("elements ", elements);
+                  setUsers(users);
+                  if (Array.isArray(elements)) {
+                        setElements(elements);
+                  }
+                  setConnected(true);
+            });
 
-            const handleCursorUpdate = (cursor) => {
 
+
+            socket.on("user-joined", (user) => {
+                  setLastJoined(user);
+                  console.log(user.username + " joined");
+            });
+
+
+
+            socket.on("cursor-update", ({ user, x, y }) => {
                   setCursors(prev => ({
                         ...prev,
-                        [cursor.userId]: cursor
+                        [user.userId]: { x, y, name: user.username, color: user.color }
                   }))
+            })
 
-            }
+            socket.on("disconnect", () => {
+                  setConnected(false);
+            });
+
+            socket.on("element-sync", handleElementSync);
+
+            socket.on("element-delete", (id) => {
+                  setElements(prev => prev.filter(el => el.id !== id));
+            });
 
 
-            const removeCursor = (id) => {
+
+            socket.on("user-left", (user) => {
+                  console.log(user)
+                  setLastLeft(user);
 
                   setCursors(prev => {
-                        const newState = { ...prev };
-                        delete newState[id];
-                        return newState;
+                        const updated = { ...prev };
+                        delete updated[user.userId];
+                        return updated;
                   });
-            }
+            })
 
-           
+            socket.on("room-error", (msg) => {
+                  setError(msg);
+            });
 
+            socket.on("connect_error", () => {
+                  setError(
+                        "Real-time collaboration server is currently unavailable. Please try again later.",
+                  );
+            });
 
-            socket.on("draw", handleDraw);
-            socket.on("update", handleUpdate);
-
-            socket.on("remove-cursor", removeCursor);
-
-            socket.on("cursor-update", handleCursorUpdate)
-
-
+            socket.on("room-users", (users) => {
+                  setUsers(users);
+            });
 
             return () => {
-                  socket.off("draw", handleDraw);
-                  socket.off("update", handleUpdate);
-                  socket.off("cursor-update", handleCursorUpdate);
-                  socket.off("remove-cursor", removeCursor);
+                  socket.off("connect");
+                  socket.off("room-joined");
+                  socket.off("cursor-update");
+                  socket.off("element-sync", handleElementSync);
+                  socket.off("element-delete");
+                  socket.off("user-left");
+                  socket.off("disconnect");
+                  socket.off("room-error");
+                  socket.off("connect_error");
+                  socket.off("room-users");
             };
 
-      }, [setElements]);
+      }, [roomId, userId, username,setElements]);
+
 };

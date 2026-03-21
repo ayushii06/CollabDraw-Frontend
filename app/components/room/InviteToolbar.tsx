@@ -5,7 +5,7 @@ function InviteToolbar({ setShowInvite, roomId, copyRoomLink, roomLink }) {
   return (
     <div
       onClick={() => setShowInvite(false)}
-      className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center"
+      className="fixed inset-0 cursor-default bg-black/40 backdrop-blur-sm flex items-center justify-center"
       style={{ zIndex: 200 }}
     >
       <div

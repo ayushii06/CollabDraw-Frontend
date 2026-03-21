@@ -8,5 +8,5 @@ export type Options = {
       thinning?: number;
       smoothing?: number;
       streamline?: number;
-      text?:string
+      text?:string;
 };

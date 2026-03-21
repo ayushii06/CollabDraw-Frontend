@@ -7,7 +7,6 @@ import { getMouseCoordinates } from "../math/getMouseCoordinates";
 import { getElementAtPosition } from "../hitDetection/getElementAtPosition";
 import { socket } from "../../socket/socketClient";
 import { createElement } from "../elements/createElement";
-import { positionWithinElement } from "../hitDetection/positionWithinElement";
 
 /*
 ---------------------------------------------------------------------
@@ -20,7 +19,7 @@ As the user moves the cursor, the (x2,y2) will change based on currentMouseCoord
 
 */
 
-const handlePointerMove = ({ e, action, tool, startPanMousePosition, panOffset, scaleOffset, scale, setPanOffset, elements, setElements, selectedElement, options, canvas }: pointerMove) => {
+const handlePointerMove = ({ e,roomId, action, selectedTool, startPanMousePosition, panOffset, scaleOffset, scale, setPanOffset, elements, setElements, selectedElement, options, canvas }: pointerMove) => {
 
       // get the current mouse coordinate
       const { x, y } = getMouseCoordinates(e, panOffset, scaleOffset, scale);
@@ -39,11 +38,11 @@ const handlePointerMove = ({ e, action, tool, startPanMousePosition, panOffset, 
       }
 
 
-      if (tool === 'select') {
+      if (selectedTool === 'select') {
             const element = getElementAtPosition(x, y, elements);
 
             if (element) {
-                  const cursor = getCursor(tool, element.position);
+                  const cursor = getCursor(selectedTool, element.position);
                   canvas.style.cursor = cursor;
             } else {
                   canvas.style.cursor = "default";
@@ -125,7 +124,9 @@ const handlePointerMove = ({ e, action, tool, startPanMousePosition, panOffset, 
 
                   setElements(elementCopy, true);
 
-                  socket.emit("move-element", elementCopy[index]);
+                  const ele = elementCopy[index];
+
+                  socket.emit("sync-element",{roomId, element:ele});
 
 
             }
@@ -181,7 +182,7 @@ const handlePointerMove = ({ e, action, tool, startPanMousePosition, panOffset, 
                   });
 
                   /* 3️⃣ Emit to other users */
-                  socket.emit("update-element", updatedElement);
+                  socket.emit("sync-element", {roomId,element:updatedElement});           
             }
       }
       else if (action === 'resize') {
@@ -222,7 +223,7 @@ const { position } = selectedElement;
                   });
 
                   updateElement({ id, x1, y1, x2, y2, tool, options, elements, setElements: setElements, setPanOffset: setPanOffset });
-                  socket.emit("update-element", updatedElement);
+                  socket.emit("sync-element", {roomId,element:updatedElement});
       }
       
       else if (action === 'erase') {
@@ -236,7 +237,10 @@ const { position } = selectedElement;
                         prev.filter(el => el.id !== element.id)
                   );
 
+                  socket.emit("delete-element", {roomId,id:element.id});
+
             }
+
       }
 
 

@@ -1,17 +1,15 @@
+"use client"
 import Image from "next/image";
 import plus from "../../../public/toolbar/plus.svg";
 import minus from "../../../public/toolbar/minus.svg";
 import { useEffect } from "react";
 import { usePressedKeys } from "../../hooks/usePressedKeys";
 import { Offset } from "../../models/types";
+import { useCanvas } from "../../context/canvasContext/useCanvas";
 
-interface ZoomProps {
-  scale: number;
-  setScale: React.Dispatch<React.SetStateAction<number>>;
-  setPanOffset:React.Dispatch<React.SetStateAction<Offset>>;
-}
-
-function ZoomControls({ scale, setScale,setPanOffset }: ZoomProps) {
+function ZoomControls() {
+  const {scale,setScale,setPanOffset} = useCanvas();
+  
   const pressedKeys = usePressedKeys();
   const onZoom = (delta: number) => {
     setScale((prevState: number): number =>

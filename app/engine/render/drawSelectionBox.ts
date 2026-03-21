@@ -5,15 +5,15 @@ function drawSelectionBox(ctx: CanvasRenderingContext2D, element: elementType) {
             return;
       }
       const { x1, y1, x2, y2 } = element;
-      const padding = 5;
+      const padding = 4;
 
 
       ctx.save()
 
-      ctx.strokeStyle = "blue"
+      ctx.strokeStyle = "#6965db"
       ctx.lineWidth = 1
 
-      ctx.setLineDash([6, 4])
+      // ctx.setLineDash([6, 4])
 
       ctx.strokeRect(
             Math.min(x1, x2) - padding,
@@ -29,13 +29,17 @@ function drawHandle(ctx: CanvasRenderingContext2D, element: elementType) {
       if (element.tool == "pen") {
             return;
       }
-      const { x1, y1 } = element;
+      const { x1, y1,x2,y2 } = element;
       
       ctx.fillStyle = "white"
-      ctx.strokeStyle = "blue"
+      ctx.strokeStyle = "#6965db"
+      ctx.lineWidth=1;
 
       ctx.beginPath()
-      ctx.rect(x1 - 7, y1 - 7, 8, 8)
+      ctx.rect(x1 - 5, y1 - 5, 8, 8)
+      ctx.rect(x2 - 5, y1 - 5, 8, 8)
+      ctx.rect(x1 - 5, y2 - 5, 8, 8)
+      ctx.rect(x2 - 4, y2 - 4, 8, 8)
       ctx.fill()
       ctx.stroke()
 }

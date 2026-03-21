@@ -37,7 +37,7 @@ That's why I have used UUID, that will create a new random and unqique ids for a
 
 */
 
-const handlePointerDown = ({ e, panOffset, scaleOffset, scale, action, setAction, tool, elements, setElements, setSelectedElement, setStartPanMousePosition, options }: pointerDown) => {
+const handlePointerDown = ({ e, panOffset, scaleOffset, scale, action, setAction, selectedTool, elements, setElements, setSelectedElement, setStartPanMousePosition, options }: pointerDown) => {
 
 
       // If during typing, user has clicked by mistake somewhere, we need to continue typing only.
@@ -67,13 +67,13 @@ const handlePointerDown = ({ e, panOffset, scaleOffset, scale, action, setAction
 
       // Check the tool!
 
-      if (tool === 'pan') {
+      if (selectedTool === 'pan') {
             setAction("panning");
             setStartPanMousePosition({ x: x, y: y });
             return;
       }
       // User wants to resize or move the element.
-      else if (tool === 'select') {
+      else if (selectedTool === 'select') {
             //checks if the mouse is over an element and if yes, it returns that element with the position where our cursor was at (inside? , top-left? , start? etc)
 
             const element: ElementWithPosition = getElementAtPosition(x, y, elements);
@@ -101,7 +101,7 @@ const handlePointerDown = ({ e, panOffset, scaleOffset, scale, action, setAction
                         setSelectedElement({ ...element, xOffset, yOffset });
                   }
                   setElements(prevState => prevState);
-                  socket.emit("draw-element", element);
+                  // socket.emit("draw-element", element);
 
 
                   if (element.position === 'inside') {
@@ -112,7 +112,7 @@ const handlePointerDown = ({ e, panOffset, scaleOffset, scale, action, setAction
                   }
             }
       }
-      else if (tool === "eraser") {
+      else if (selectedTool === "eraser") {
             setAction("erase");
       }
       else {
@@ -136,7 +136,7 @@ const handlePointerDown = ({ e, panOffset, scaleOffset, scale, action, setAction
             const y2 = y;
 
             // get the element definition from createElement Function.
-            const element: elementType = createElement({ id, x1, y1, x2, y2, tool: tool, options });
+            const element: elementType = createElement({ id, x1, y1, x2, y2, tool: selectedTool, options });
 
             // add the element to the elements array
             setElements(prevState => {
@@ -145,13 +145,13 @@ const handlePointerDown = ({ e, panOffset, scaleOffset, scale, action, setAction
             });
 
             // send the created element to all connected clients of the room.
-            socket.emit("draw-element", element);
+            // socket.emit("draw-element", element);
 
             // We set the selectedElement as this element, because we will be performing the action on this element.
             setSelectedElement(element);
 
             // Now set the action based on tool
-            setAction(tool === 'text' ? 'write' : 'draw');
+            setAction(selectedTool === 'text' ? 'write' : 'draw');
 
       }
 }

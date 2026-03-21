@@ -47,11 +47,11 @@ function ViewAllUsers({setShowUsers,users}) {
                     text-white font-semibold"
                     style={{ backgroundColor: user.color }}
                   >
-                    {user.name.charAt(0)}
+                    {user.username.charAt(0)}
                   </div>
 
                   <span className="text-sm text-gray-700 font-medium">
-                    {user.name}
+                    {user.username}
                   </span>
 
                 </div>

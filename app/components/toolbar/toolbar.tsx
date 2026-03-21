@@ -1,38 +1,29 @@
 "use client";
 
-import { useDispatch } from "react-redux";
-import { AppDispatch, RootState } from "../../store/store";
 import { ToolBar } from "../../models/types";
-import { useAppSelector } from "../../hooks/reduxHooks";
-import { setTool } from "../../store/slice/toolbarSlice";
 import { icons } from "../../utils/constants/tools";
-import { setBackground, setIsReset } from "../../store/slice/optionsSlice";
 import { CanvaBg } from "../../utils/constants/colors";
 import { Palette } from "lucide-react";
+import { useTool } from "../../context/toolContext/useTool";
+import { useCanvas } from "../../context/canvasContext/useCanvas";
 
 export default function Toolbar() {
-  const dispatch = useDispatch<AppDispatch>();
 
-  const selectedTool = useAppSelector((state: RootState) => state.toolbar.tool);
-  const currentBg = useAppSelector(
-    (state: RootState) => state.options.backgrounds,
-  );
+  const { selectedTool, setSelectedTool } = useTool();
+  const {setCanvaBg,setIsReset} = useCanvas();
 
   // 2. Explicitly type the ID as ToolBar
   const handleClick = (id: ToolBar) => {
     if (id === "reset") {
-      dispatch(setIsReset(true));
+      setIsReset(true);
       return;
     }
 
-    dispatch(setTool(id));
+    setSelectedTool(id);
   };
 
   return (
-    <div
-      className="fixed bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2 px-3 py-2 z-40  bg-white/80 backdrop-blur-md rounded-xl shadow-lg border border-gray-200"
-      
-    >
+    <div className="fixed bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2 px-3 py-2 z-40  bg-white/80 backdrop-blur-md rounded-xl shadow-lg border border-gray-200">
       {icons.map((icon) => {
         const Icon = icon.src;
 
@@ -76,7 +67,7 @@ export default function Toolbar() {
             <div
               key={color}
               className="w-6 h-6 rounded-full border border-gray-700 cursor-pointer"
-              onClick={() => dispatch(setBackground(color))}
+              onClick={() => setCanvaBg(color)}
               style={{ background: color }}
             />
           ))}

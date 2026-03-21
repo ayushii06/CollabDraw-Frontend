@@ -1,38 +1,14 @@
 import React, { useEffect, useRef } from "react";
 import { handleBlur } from "../../engine/elements/handleBlur";
-import { elementType, SetHistoryState } from "../../models/types";
-import { Offset } from "../../models/types";
-
-interface propsType {
-  selectedElement: elementType;
-  panOffset: Offset;
-  scale: number;
-  scaleOffset: Offset;
-  setAction: React.Dispatch<React.SetStateAction<string>>;
-  setSelectedElement: React.Dispatch<React.SetStateAction<elementType>>;
-  action: string;
-  elements: Array<elementType>;
-  setElements: SetHistoryState;
-  setPanOffset: React.Dispatch<React.SetStateAction<Offset>>;
-}
+import { useCanvas } from "../../context/canvasContext/useCanvas";
 
 /*
 ---------------------------------------------------------------------------------
 -----------------------------x TextEditor x--------------------------------------
 */
 
-function TextEditor({
-  selectedElement,
-  panOffset,
-  scale,
-  scaleOffset,
-  action,
-  setAction,
-  setSelectedElement,
-  elements,
-  setElements,
-  setPanOffset,
-}: propsType) {
+function TextEditor() {
+  const {selectedElement, panOffset, scale, scaleOffset, action, setAction, setSelectedElement, elements, setElements, setPanOffset,} = useCanvas();
   const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
   if (selectedElement.tool != "text") {
     return null;

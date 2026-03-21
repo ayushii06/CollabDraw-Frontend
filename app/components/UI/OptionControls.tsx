@@ -1,3 +1,4 @@
+"use client"
 import Image from 'next/image'
 import undoImg from "../../../public/toolbar/undo.svg";
 import redoImg from "../../../public/toolbar/redo.svg";

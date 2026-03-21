@@ -4,43 +4,32 @@ import { Share2 } from "lucide-react"
 import { useEffect, useState } from "react"
 import ViewAllUsers from "./ViewAllUsers"
 import InviteToolbar from "./InviteToolbar"
-import { socket } from "../../socket/socketClient"
+import { useRoom } from "../../context/roomContext/useRoom"
 
-interface userType {
+export type userType = {
   userId: string
   name: string
   color: string
 }
 
-export default function RoomToolbar() {
-
-  const [users, setUsers] = useState<Array<userType>>([])
+export default function RoomToolbar({roomId}:{roomId:string}) {
+  const {users} = useRoom();
+  // console.log(users)
 
   const [showUsers, setShowUsers] = useState(false)
 
   const [showInvite, setShowInvite] = useState(false)
 
-  const roomLink = typeof window !== "undefined" ? window.location.href : ""
-  const roomId = roomLink.split("/").pop()
+  const roomLink = typeof window !== "undefined" ? `localhost:3000/room/${roomId}` : ""
 
   const copyRoomLink = () => {
-    navigator.clipboard.writeText(window.location.href)
+    navigator.clipboard.writeText(`localhost:3000/room/${roomId}`)
     alert("Room link copied!")
   }
 
   const visibleUsers = users.slice(0, 3)
   const extraUsers = users.length - 3
 
-  useEffect(()=>{
-
-   socket.on("room-users",(users)=>{
-    // console.log(users);
-      setUsers(users);
-   });
-
-
-
-},[]);
 
   return (
     <>
@@ -67,7 +56,7 @@ export default function RoomToolbar() {
               transition"
               style={{ backgroundColor: user.color }}
             >
-              {user.name.charAt(0)}
+              {user.username.charAt(0)}
             </div>
           ))}
 

@@ -5,61 +5,27 @@ import ZoomControls from "./ZoomControls";
 import OptionControls from "./OptionControls";
 import DrawingBoard from "./DrawingBoard";
 import { useHistory } from "../../hooks/useHistory";
-import { useDispatch } from "react-redux";
-import { setIsDownload, setIsReset } from "../../store/slice/optionsSlice";
 import { drawElement } from "../../engine/render/drawElement";
 import { downloadCanvas } from "../../utils/downloadCanvas/downloadCanvas";
-import { useAppSelector } from "../../hooks/reduxHooks";
-import { SelectedElement } from "../../models/element/setSelectedElement";
-import { Offset } from "../../models/types";
-import throttle from "lodash.throttle";
-
-import {
-  drawHandle,
-  drawSelectionBox,
-} from "../../engine/render/drawSelectionBox";
+import {drawHandle, drawSelectionBox} from "../../engine/render/drawSelectionBox";
 import { useSocketEvents } from "../../hooks/socketHooks";
 import { useParams } from "next/navigation";
-import { socket } from "../../socket/socketClient";
-import ToasterDemo from "../alerts/Toaster";
-import LeaveRoom from "./LeaveRoom";
-import RoomToolbar from "../room/RoomToolbar";
+import { useTool } from "../../context/toolContext/useTool";
+import { useCanvas } from "../../context/canvasContext/useCanvas";
+import { useRoom } from "../../context/roomContext/useRoom";
 
-function Home() {
-  const [panOffset, setPanOffset] = useState<Offset>({ x: 0, y: 0 });
-  const [scale, setScale] = useState<number>(1);
-  const [scaleOffset, setScaleOffset] = useState<Offset>({ x: 0, y: 0 });
-  const [selectedElement, setSelectedElement] = useState<SelectedElement>(null);
-  const [cursors, setCursors] = useState({});
-  const [action, setAction] = useState<string>("none");
-  const [startPanMousePosition, setStartPanMousePosition] = useState<Offset>({
-    x: 0,
-    y: 0,
-  });
-  const [windowSize, setWindowSize] = useState<{
-    width: number;
-    height: number;
-  }>({ width: 0, height: 0 });
-
-  const [elements, setElements, undo, redo, eraser,resetCanvas] = useHistory([]);
-  const download = useAppSelector((state) => state.options.isDownload);
-  const reset = useAppSelector((state) => state.options.isReset);
-  const canvaBg = useAppSelector((state) => state.options.backgrounds);
-  const dispatch = useDispatch();
-  const params = useParams();
-  const roomId = params.id as string;
-
-  useSocketEvents({ setElements, setCursors });
-
+function Home({cursorPosition,setElements,resetCanvas,elements,redo,undo}) {
+  const {setSelectedElement,setWindowSize,scale,setScaleOffset,panOffset,action,selectedElement,isReset,download,canvaBg,setIsReset,setIsDownload} = useCanvas();
+  const {roomId} = useRoom();
   useEffect(() => {
-    if (!reset) return;
+    if (!isReset) return;
 
     setElements([]); // clears all drawings
     setSelectedElement(null); // remove selection
     resetCanvas(); // clear history
 
-    dispatch(setIsReset(false));
-  }, [reset]);
+    setIsReset(false);
+  }, [isReset]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -78,9 +44,9 @@ function Home() {
   useEffect(() => {
     if (download) {
       downloadCanvas(canvaBg);
-      dispatch(setIsDownload(false)); // Reset download state if needed
+      setIsDownload(false); // Reset download state if needed
     }
-  }, [download, dispatch]);
+  }, [download]);
 
   // console.log("elements uptil now, ", elements);
 
@@ -151,80 +117,40 @@ function Home() {
     ctx.restore();
   }, [elements, selectedElement, panOffset, action, scale]);
 
-  const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
-  useEffect(() => {
-    const handleMouseMove = throttle((e: MouseEvent) => {
-      setCursorPosition({
-        x: e.clientX,
-        y: e.clientY,
-      });
+  
 
-      socket.emit("cursor-move", {
-        x: e.clientX,
-        y: e.clientY,
-        roomId,
-      });
-    }, 20);
-
-    window.addEventListener("mousemove", handleMouseMove);
-
-    return () => {
-      window.removeEventListener("mousemove", handleMouseMove);
-    };
-  }, []);
-
-  const tool = useAppSelector((state) => state.toolbar.tool);
-  const settings = useAppSelector((state) => state.menu);
+  const {selectedTool,options} = useTool();
 
   useEffect(() => {
-    if (tool === "pen" || tool === "eraser") {
+    if (selectedTool === "pen" || selectedTool === "eraser") {
       document.body.style.cursor = "none";
     } else {
       document.body.style.cursor = "default";
     }
-  }, [tool]);
+  }, [selectedTool]);
 
 
 
   return (
     <>
-     <div className="absolute top-4 left-4 z-50 flex items-center ">
-      
-      <LeaveRoom />
-
-      <RoomToolbar />
-
-    </div>
+     
   
       <div className="canva">
         <DrawingBoard
+        elements={elements}
           canvasRef={canvasRef}
-          canvaBg={canvaBg}
-          selectedElement={selectedElement}
-          setSelectedElement={setSelectedElement}
-          panOffset={panOffset}
-          setPanOffset={setPanOffset}
-          scale={scale}
-          scaleOffset={scaleOffset}
-          action={action}
-          setAction={setAction}
-          elements={elements}
           setElements={setElements}
-          startPanMousePosition={startPanMousePosition}
-          setStartPanMousePosition={setStartPanMousePosition}
-          eraser={eraser}
-          windowSize={windowSize}
         />
       </div>
-      {tool === "pen" && (
+      {selectedTool === "pen" && (
         <div
           style={{
             position: "fixed",
             left: cursorPosition.x,
             top: cursorPosition.y,
-            width: settings.size,
-            height: settings.size,
-            background: settings.strokeColor,
+            width: options.size,
+            height: options.size,
+            background: options.strokeColor,
             borderRadius: "50%",
             transform: "translate(-50%, -50%)",
             pointerEvents: "none",
@@ -233,7 +159,7 @@ function Home() {
         />
       )}
 
-      {tool === "eraser" && (
+      {selectedTool === "eraser" && (
         <div
           style={{
             position: "fixed",
@@ -252,54 +178,14 @@ function Home() {
       )}
 
       {action === "write" ? (
-        <TextEditor
-          elements={elements}
-          setElements={setElements}
-          setPanOffset={setPanOffset}
-          selectedElement={selectedElement}
-          panOffset={panOffset}
-          scale={scale}
-          scaleOffset={scaleOffset}
-          action={action}
-          setAction={setAction}
-          setSelectedElement={setSelectedElement}
-        />
+        <TextEditor/>
       ) : null}
 
-      <ZoomControls
-        scale={scale}
-        setScale={setScale}
-        setPanOffset={setPanOffset}
-      />
+      <ZoomControls/>
 
       <OptionControls redo={redo} undo={undo} />
-      {Object.values(cursors).map((cursor: any) => (
-        <div
-          key={cursor.userId}
-          style={{
-            position: "absolute",
-            left: cursor.x,
-            top: cursor.y,
-            pointerEvents: "none",
-            zIndex: "1000",
-          }}
-        >
-          <div className="text-sm bg-purple-500 text-white px-2 py-1 rounded">
-            {cursor.name}
-          </div>
 
-          <div>▲</div>
-        </div>
-      ))}
-
-      <ToasterDemo/>
-
-      <p
-        style={{ zIndex: 2 }}
-        className="font-bold max-md:text-sm max-md:w-2/12 max-sm:bottom-16 max-sm:text-xs absolute py-2 px-2 text-gray-400 flex items-center justify-center bottom-4 left-4 rounded-xl bg-gray-100"
-      >
-        CREATED BY AYUSHI PAL
-      </p>
+      
     </>
   );
 }

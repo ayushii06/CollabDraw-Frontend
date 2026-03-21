@@ -67,9 +67,6 @@ const createElement = ({
         points: [{ x: x1, y: y1 }],
         strokeColor: options.strokeColor,
         size: options.size,
-        thinning: options.thinning,
-        smoothing: options.smoothing,
-        streamline: options.streamline,
       };
 
     case "text":

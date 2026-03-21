@@ -14,8 +14,8 @@ const tools: Record<string, ToolBar> = {
 } as const;
 
 interface IconItem {
-    id: ToolBar; // This ensures the ID matches your Redux state exactly
-    src: any;    // Ideally replace 'any' with your icon component type
+    id: ToolBar;
+    src: any;
     alt: string;
     url: string;
 }

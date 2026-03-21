@@ -17,7 +17,7 @@ export interface pointerDown extends pointerType {
       scaleOffset: Offset;
       scale: number;
       setAction: React.Dispatch<React.SetStateAction<string>>;
-      tool: ToolBar;
+      selectedTool: ToolBar;
       setElements: SetHistoryState;
       setSelectedElement: React.Dispatch<React.SetStateAction<SelectedElement>>;
       setStartPanMousePosition: React.Dispatch<React.SetStateAction<Offset>>;
@@ -27,7 +27,7 @@ export interface pointerDown extends pointerType {
 export interface pointerMove extends pointerType {
       startPanMousePosition: Offset;
       selectedElement: SelectedElement;
-      tool: ToolBar;
+      selectedTool: ToolBar;
       setPanOffset: React.Dispatch<React.SetStateAction<Offset>>;
       setElements: SetHistoryState;
       options:Options;
@@ -35,6 +35,7 @@ export interface pointerMove extends pointerType {
       scaleOffset:Offset;
       scale:number;
       canvas:HTMLCanvasElement|null;
+      roomId:string
 }
 
 export interface pointerUp extends pointerType {
@@ -46,6 +47,8 @@ export interface pointerUp extends pointerType {
       panOffset:Offset;
       scaleOffset:Offset;
       scale:number;
+      setSelectedTool:React.Dispatch<React.SetStateAction<ToolBar>>;
+      roomId:string
 
 }
 

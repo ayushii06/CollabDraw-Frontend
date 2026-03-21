@@ -13,17 +13,18 @@ const geistMono = localFont({
   weight: "100 900",
 });
 
-import { Provider } from 'react-redux';
-import { store } from './store/store'; // Adjust path if necessary
+import AppProviders from "./context/AppProvider";
+import ToasterDemo from "./components/alerts/Toaster";
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Provider store={store}>
+          <AppProviders>
+            <ToasterDemo/>
           {children}
-        </Provider>
+          </AppProviders>
       </body>
     </html>
   );

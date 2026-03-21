@@ -1,3 +1,4 @@
+"use client"
 import { useState } from "react";
 import { elementType, ElementWithPosition } from "../models/types";
 
@@ -30,8 +31,9 @@ Then if user press redo, the elements array will be now equal to index 3.
 
 
 const useHistory = (initialState: elementType[]) => {
-      // index is initially 0 and it will point to the array that is present in elements.
+      // index is initially 0 and it will point to the index that is present in elements.
       const [index, setIndex] = useState<number>(0);
+
       // 2D array storing array of array of elements.
       const [history, setHistory] = useState<elementType[][]>([initialState]);
 
@@ -47,6 +49,8 @@ const useHistory = (initialState: elementType[]) => {
           typeof action === "function"
             ? action(prevState)
             : action;
+        
+        // console.log("New state is ",newState)
 
         const safeState = Array.isArray(newState) ? newState : [];
 
@@ -91,6 +95,9 @@ const useHistory = (initialState: elementType[]) => {
         setHistory([[]]);
         setIndex(0);
       }
+
+      // console.log("history",history)
+      // console.log("index",index)
 
       return [history[index], setState, undo, redo, eraser,resetCanvas] as const;
 };

@@ -9,9 +9,6 @@ interface canvasElementType {
 export interface penType extends canvasElementType {
   tool:"pen";
   points: { x: number, y: number }[];
-  thinning: number;
-  smoothing: number;
-  streamline: number;
 }
 
 export interface textType extends canvasElementType {

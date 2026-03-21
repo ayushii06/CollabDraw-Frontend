@@ -1,5 +1,4 @@
 import { elementType, Options, penType, SetHistoryState, ToolBar, Offset } from "../../models/types";
-import { socket } from "../../socket/socketClient";
 import { createElement } from "./createElement";
 
 
@@ -41,9 +40,6 @@ And, at the end, we are using setElements(), to store the elements in the array.
 */
 
 const updateElement = ({ id, x1, y1, x2, y2, tool, options, elements, setElements, setPanOffset ,canvas}: propsType) => {
-
-      
-
       // To maintain immutability, instead of modifying elements[id], we created a copy:
       // elementsCopy and update that.
       // console.log(elements, " id ", id);

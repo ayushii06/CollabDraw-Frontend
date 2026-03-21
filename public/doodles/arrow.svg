@@ -1,0 +1,10 @@
+<svg width="90" height="60" viewBox="0 0 90 60" xmlns="http://www.w3.org/2000/svg">
+  <path d="M10 30 H70"
+        stroke="#fb7185"
+        stroke-width="4"
+        fill="none"
+        stroke-linecap="round"/>
+
+  <polygon points="70,20 85,30 70,40"
+        fill="#fb7185"/>
+</svg>
