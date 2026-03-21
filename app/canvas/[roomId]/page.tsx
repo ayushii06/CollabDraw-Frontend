@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import Toolbar from "../../components/toolbar/Toolbar";
-import Menu from "../../components/menu/Menu";
+import Toolbar from "../../components/toolbar/toolbar";
+import Menu from "../../components/menu/menu";
 import Canvas from "../../components/UI/Canvas";
 import { useParams, useRouter } from "next/navigation";
 import { socket } from "../../socket/socketClient";
